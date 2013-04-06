@@ -3,15 +3,22 @@
     android:id="@+id/list_item"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:layout_marginLeft="5dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:padding="10dp" >
 
     <TextView
         android:id="@+id/list_item_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:padding="10dp"
-        android:textSize="20sp" />
-
+        android:textSize="20sp" 
+        android:visibility="gone"/>
+        
+    <ImageView
+        android:id="@+id/list_item_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" 
+        android:contentDescription="@string/list_item_image_view"/>
 </LinearLayout>

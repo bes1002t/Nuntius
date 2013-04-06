@@ -1,4 +1,4 @@
-package com.android.secure.android.nuntius;
+package com.android.secure.android.nuntius.network;
 
 import android.util.Log;
 import java.io.*;
@@ -6,47 +6,83 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
  
- 
+/**
+ * TCP client which handles the communication between a server and a client application  
+ */
 public class TCPClient {
 
     private String serverMessage;
     public static final String SERVERIP = ""; //your computer IP address
-    public static final int SERVERPORT = 8888;
+    public static final int SERVERPORT = 8888; 
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
 
-    PrintWriter out;
-    BufferedReader in;
+    private PrintWriter out;
+    private OutputStream outStream;
+    private BufferedReader in;
  
+    
     /**
-     *  Constructor of the class. OnMessagedReceived listens for the messages received from server
+     *  Constructor of the class, initiates the listener
      */
     public TCPClient(OnMessageReceived listener) {
         mMessageListener = listener;
     }
  
-    /**
-     * Sends the message entered by client to the server
+    
+    /*
+     * Sends the message from the client to the server
      * @param message text entered by client
      */
-    public void sendMessage(String message){  	
+    public void sendMessage(String message) {  	
         if (out != null && !out.checkError()) {
+        	message = "string;;" + message;
+        		
             out.println(message);
             out.flush();
         }
     }
- 
-    public void stopClient(){
-        mRun = false;
+    
+    
+    /*
+     * Sends a file from the client to the server
+     * @param path to the file
+     * @throws IOException if there occurs an error
+     */
+    public void sendFIle(String path) throws IOException {
+    	File f = new File(path);
+    	
+    	byte [] buffer = new byte[(int)f.length()];
+    	FileInputStream fis = new FileInputStream(f);
+    	BufferedInputStream bis = new BufferedInputStream(fis);
+    	bis.read(buffer,0,buffer.length);
+    	
+    	outStream.write(buffer,0,buffer.length);
+    	outStream.flush();
     }
+    
  
+    /*
+     * start the client
+     */
     public void run() {
- 
         mRun = true;
  
         createSocket(1);
     }
- 
+    
+    
+    /*
+     * stop the client
+     */
+    public void stopClient(){
+        mRun = false;
+    }
+    
+    
+    /*
+     * create the socket for a connection to the server
+     */
     private void createSocket(int times) {
     	try {
     		//here you must put your computer's IP address.
@@ -74,6 +110,7 @@ public class TCPClient {
     	try {
             //send the message to the server
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+            outStream = socket.getOutputStream();
 
             Log.e("TCP Client", "C: Sent.");
 
